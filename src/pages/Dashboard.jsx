@@ -59,10 +59,11 @@ const Dashboard = () => {
 
   const loadData = async () => {
     try {
-      // Load posts and drafts from API
-      const [allPosts, allDrafts] = await Promise.all([
+      // Load posts, drafts, and stats from API
+      const [allPosts, allDrafts, dashboardStats] = await Promise.all([
         dataService.getPosts(),
-        dataService.getDrafts()
+        dataService.getDrafts(),
+        dataService.getDashboardStats()
       ]);
       
       setPosts(allPosts);
@@ -75,7 +76,7 @@ const Dashboard = () => {
         totalPosts: allPosts.length,
         scheduledPosts: scheduled,
         publishedPosts: published,
-        totalReach: allPosts.length > 0 ? Math.floor(Math.random() * 50000) + 25000 : 0
+        totalReach: dashboardStats.totalReach || 0
       });
     } catch (error) {
       console.error('Error loading data:', error);
@@ -258,14 +259,50 @@ const Dashboard = () => {
   );
 
   const AnalyticsPreviewWidget = ({ widget }) => {
-    // Generate dynamic mock analytics data
-    const mockAnalytics = {
-      impressions: Math.floor(Math.random() * 3000) + 1500, // 1.5K - 4.5K
-      engagements: Math.floor(Math.random() * 300) + 150,   // 150 - 450
-      growth: (Math.random() > 0.3 ? '+' : '-') + (Math.random() * 20 + 5).toFixed(1) + '%'
-    };
-    
-    const isPositiveGrowth = mockAnalytics.growth.startsWith('+');
+    const [previewData, setPreviewData] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+      const loadPreviewData = async () => {
+        try {
+          const data = await dataService.getAnalyticsPreview();
+          setPreviewData(data);
+        } catch (error) {
+          console.error('Error loading analytics preview:', error);
+          toast({
+            title: "Error loading analytics",
+            description: "Unable to load analytics preview.",
+            variant: "destructive"
+          });
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      loadPreviewData();
+    }, []);
+
+    if (isLoading) {
+      return (
+        <DraggableWidget widget={widget}>
+          <div className="flex items-center justify-center h-full">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-400" />
+          </div>
+        </DraggableWidget>
+      );
+    }
+
+    if (!previewData) {
+      return (
+        <DraggableWidget widget={widget}>
+          <div className="text-center text-gray-400">
+            No analytics data available
+          </div>
+        </DraggableWidget>
+      );
+    }
+
+    const isPositiveGrowth = previewData.growth.startsWith('+');
     
     return (
       <DraggableWidget widget={widget}>
@@ -279,16 +316,16 @@ const Dashboard = () => {
               variant="secondary" 
               className={`text-xs ${isPositiveGrowth ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
             >
-              {mockAnalytics.growth}
+              {previewData.growth}
             </Badge>
           </div>
           <div className="grid grid-cols-2 gap-4 text-center">
             <div>
-              <div className="text-lg font-bold text-white">{(mockAnalytics.impressions / 1000).toFixed(1)}K</div>
+              <div className="text-lg font-bold text-white">{(previewData.impressions / 1000).toFixed(1)}K</div>
               <div className="text-xs text-gray-400">Impressions</div>
             </div>
             <div>
-              <div className="text-lg font-bold text-white">{mockAnalytics.engagements}</div>
+              <div className="text-lg font-bold text-white">{previewData.engagements}</div>
               <div className="text-xs text-gray-400">Engagements</div>
             </div>
           </div>

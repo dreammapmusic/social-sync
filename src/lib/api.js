@@ -258,6 +258,15 @@ class ApiService {
   async healthCheck() {
     return this.request('/api/health');
   }
+
+  // Dashboard methods
+  async getDashboardStats() {
+    return this.request('/api/dashboard/stats');
+  }
+
+  async getAnalyticsPreview() {
+    return this.request('/api/analytics/preview');
+  }
 }
 
 // Create and export a singleton instance

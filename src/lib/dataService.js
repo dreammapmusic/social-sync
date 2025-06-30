@@ -218,6 +218,19 @@ class DataService {
     await this.ensureInitialized();
     await apiService.deleteFile(id);
   }
+
+  // Dashboard methods
+  async getDashboardStats() {
+    await this.ensureInitialized();
+    const response = await apiService.getDashboardStats();
+    return response.stats;
+  }
+
+  async getAnalyticsPreview() {
+    await this.ensureInitialized();
+    const response = await apiService.getAnalyticsPreview();
+    return response.preview;
+  }
 }
 
 // Create and export a singleton instance
