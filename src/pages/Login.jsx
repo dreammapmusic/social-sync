@@ -1,0 +1,218 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { toast } from '@/components/ui/use-toast';
+import { Eye, EyeOff, Zap } from 'lucide-react';
+import dataService from '@/lib/dataService';
+
+const Login = ({ setIsAuthenticated, setUser }) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      if (!formData.email || !formData.password) {
+        throw new Error('Please enter valid credentials');
+      }
+
+      const result = await dataService.login(formData.email, formData.password);
+      
+      if (result.success) {
+        setUser(result.user);
+        setIsAuthenticated(true);
+        
+        toast({
+          title: "Welcome back!",
+          description: "You've successfully logged in to SocialSync.",
+        });
+      } else {
+        throw new Error(result.error || 'Login failed');
+      }
+    } catch (error) {
+      toast({
+        title: "Login failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    setLoading(true);
+    setFormData({
+      email: 'demo@socialsync.com',
+      password: 'demo123'
+    });
+    
+    try {
+      const result = await dataService.login('demo@socialsync.com', 'demo123');
+      
+      if (result.success) {
+        setUser(result.user);
+        setIsAuthenticated(true);
+        
+        toast({
+          title: "Demo login successful!",
+          description: "Welcome to SocialSync demo mode.",
+        });
+      } else {
+        throw new Error(result.error || 'Demo login failed');
+      }
+    } catch (error) {
+      toast({
+        title: "Demo login failed",
+        description: "Make sure your backend is running. " + error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <Helmet>
+        <title>Login - SocialSync</title>
+        <meta name="description" content="Login to your SocialSync account to manage and schedule your social media posts." />
+      </Helmet>
+      
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            {/* Logo and title */}
+            <div className="text-center mb-8">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                className="inline-flex items-center justify-center w-16 h-16 rounded-full social-gradient mb-4"
+              >
+                <Zap className="h-8 w-8 text-white" />
+              </motion.div>
+              <h1 className="text-3xl font-bold gradient-text mb-2">SocialSync</h1>
+              <p className="text-gray-400">Schedule your social media success</p>
+            </div>
+
+            <Card className="glass-effect border-white/10">
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl text-white">Welcome Back</CardTitle>
+                <CardDescription className="text-gray-400">
+                  Sign in to your account to continue
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-300">Email</label>
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      className="bg-white/5 border-white/10 text-white placeholder:text-gray-500"
+                      required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-300">Password</label>
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter your password"
+                        value={formData.password}
+                        onChange={(e) => setFormData({...formData, password: e.target.value})}
+                        className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 pr-10"
+                        required
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full social-gradient"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <div className="flex items-center">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Signing in...
+                      </div>
+                    ) : (
+                      'Sign In'
+                    )}
+                  </Button>
+                </form>
+
+                <div className="mt-6">
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-white/10"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                      <span className="px-2 bg-slate-900 text-gray-400">Or try demo</span>
+                    </div>
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full mt-4 border-white/10 text-gray-300 hover:bg-white/5 hover:text-white"
+                    onClick={handleDemoLogin}
+                  >
+                    Enter Demo Mode
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <motion.p 
+              className="text-center text-sm text-gray-500 mt-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              Don't have an account? 
+              <Button 
+                variant="link" 
+                className="text-blue-400 hover:text-blue-300 p-0 ml-1"
+                onClick={() => toast({
+                  title: "🚧 This feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀"
+                })}
+              >
+                Sign up
+              </Button>
+            </motion.p>
+          </motion.div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Login;

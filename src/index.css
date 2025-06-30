@@ -1,0 +1,278 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Dark Theme Variables (Reference Image) */
+:root,
+[data-theme="dark"] {
+  --background: 220 6% 8%;         /* #131416 */
+  --foreground: 0 0% 91%;         /* #E8E8E8 */
+  --card: 216 7% 12%;           /* #1D1F22 */
+  --card-foreground: 0 0% 91%;   /* #E8E8E8 */
+  --popover: 216 7% 12%;          /* #1D1F22 */
+  --popover-foreground: 0 0% 91%;  /* #E8E8E8 */
+  --primary: 0 0% 91%;            /* #E8E8E8 */
+  --primary-foreground: 220 6% 8%; /* #131416 */
+  --secondary: 216 8% 10%;        /* #181A1D */
+  --secondary-foreground: 0 0% 91%; /* #E8E8E8 */
+  --muted: 216 8% 10%;           /* #181A1D */
+  --muted-foreground: 220 6% 57%;  /* #8A8F98 */
+  --accent: 195 50% 70%;          /* #99cbe0 - For graph lines and highlights */
+  --accent-foreground: 220 6% 8%;   /* #131416 */
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 91%;
+  --border: 217 7% 15%;           /* #24272B */
+  --input: 217 7% 15%;            /* #24272B */
+  --ring: 195 50% 70%;            /* #99cbe0 */
+  --radius: 0.5rem;
+
+  /* Reference image theme colors */
+  --bg-primary: 0 0% 10%;           /* #1a1a1a - main background */
+  --bg-secondary: 0 0% 14%;        /* #232323 - card background */
+  --bg-tertiary: 0 0% 18%;         /* #2e2e2e - elevated surfaces */
+  --text-primary: 0 0% 90%;        /* #e5e5e5 - primary text */
+  --text-secondary: 0 0% 65%;      /* #a6a6a6 - secondary text */
+  --text-muted: 0 0% 45%;          /* #737373 - muted text */
+  --border-subtle: 0 0% 22%;       /* #383838 - subtle borders */
+  --border-default: 0 0% 26%;      /* #424242 - default borders */
+  --glass-bg: rgba(28, 28, 28, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --accent-blue: 29 78% 60%;       /* Professional blue accent */
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Corporate Dark theme - professional and minimal */
+body,
+body.dark {
+  background: hsl(var(--bg-primary));
+  color: hsl(var(--text-primary));
+  min-height: 100vh;
+  /* Subtle gradient overlay for depth */
+  background-image: linear-gradient(145deg, hsl(0 0% 7%) 0%, hsl(0 0% 9%) 50%, hsl(0 0% 6%) 100%);
+}
+
+.glass-effect {
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+}
+
+/* Professional button styles */
+.btn-primary {
+  background: #3b82f6 !important;
+  color: white !important;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.4);
+}
+
+/* Corporate-style platform branding */
+.social-gradient {
+  background: #3b82f6 !important;
+  color: white !important;
+  border: 1px solid #2563eb !important;
+}
+
+.social-gradient:hover {
+  background: #1d4ed8 !important;
+  border: 1px solid #1d4ed8 !important;
+}
+
+.facebook-gradient {
+  background: hsl(220 44% 41%);
+  color: white;
+}
+
+.instagram-gradient {
+  background: hsl(329 69% 58%);
+  color: white;
+}
+
+.twitter-gradient {
+  background: hsl(203 89% 53%);
+  color: white;
+}
+
+.linkedin-gradient {
+  background: hsl(201 100% 35%);
+  color: white;
+}
+
+.youtube-gradient {
+  background: hsl(0 100% 50%);
+  color: white;
+}
+
+.tiktok-gradient {
+  background: hsl(0 0% 0%);
+  color: white;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Dashboard Grid Layouts - Professional spacing */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+  grid-auto-rows: min-content;
+}
+
+@media (min-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.75rem;
+  }
+}
+
+/* Professional text styles */
+.text-corporate {
+  color: hsl(var(--text-primary));
+  font-weight: 500;
+}
+
+.text-corporate-secondary {
+  color: hsl(var(--text-secondary));
+  font-weight: 400;
+}
+
+.text-corporate-muted {
+  color: hsl(var(--text-muted));
+  font-weight: 400;
+}
+
+/* Draggable Widget Styles */
+.widget-dragging {
+  transform: rotate(5deg) scale(1.05);
+  z-index: 1000;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  cursor: grabbing !important;
+}
+
+.widget-drop-zone {
+  transition: all 0.2s ease;
+  border: 2px dashed transparent;
+}
+
+.widget-drop-zone.drag-over {
+  border-color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Customization Mode Styles */
+.customization-active .draggable-widget {
+  outline: 2px dashed rgba(59, 130, 246, 0.3);
+  outline-offset: 4px;
+}
+
+.customization-active .draggable-widget:hover {
+  outline-color: rgba(59, 130, 246, 0.6);
+  transform: scale(1.02);
+}
+
+/* Theme Toggle Animation */
+.theme-toggle-icon {
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle-icon.rotating {
+  transform: rotate(180deg);
+}
+
+/* Smooth transitions for specific interactive elements only */
+button, a, .btn, [role="button"] {
+  transition-property: color, background-color, border-color, opacity, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Focus styles for accessibility */
+.focus-visible:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

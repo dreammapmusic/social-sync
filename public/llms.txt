@@ -1,0 +1,7 @@
+## Pages
+- [Calendar - SocialSync](/calendar): View and manage your scheduled social media posts in calendar view.
+- [Dashboard - SocialSync](/dashboard): Manage your social media posts and view analytics from your SocialSync dashboard.
+- [Enhanced Analytics - SocialSync](/analytics): Comprehensive analytics and insights for your social media performance.
+- [Files - SocialSync](/files): Manage and store your media files for social media posts.
+- [Login - SocialSync](/login): Login to your SocialSync account to manage and schedule your social media posts.
+- [Settings - SocialSync](/settings): Manage your account settings, connected social media accounts, and preferences.
