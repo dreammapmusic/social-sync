@@ -98,21 +98,22 @@ class OAuthService {
    * Build OAuth authorization URL
    */
   buildAuthUrl(platform, config, state) {
-    const params = new URLSearchParams({
-      client_id: config.clientId,
-      redirect_uri: config.redirectUri,
-      scope: config.scope,
-      response_type: 'code',
-      state: state
-    });
+    // Build parameters manually to avoid double-encoding redirect_uri
+    const params = [
+      `client_id=${encodeURIComponent(config.clientId)}`,
+      `redirect_uri=${config.redirectUri}`, // Don't encode - Facebook will handle it
+      `scope=${encodeURIComponent(config.scope)}`,
+      `response_type=code`,
+      `state=${encodeURIComponent(state)}`
+    ];
 
     // Platform-specific parameters
     if (platform === 'twitter') {
-      params.set('code_challenge', 'challenge');
-      params.set('code_challenge_method', 'plain');
+      params.push('code_challenge=challenge');
+      params.push('code_challenge_method=plain');
     }
 
-    return `${config.authUrl}?${params.toString()}`;
+    return `${config.authUrl}?${params.join('&')}`;
   }
 
   /**
