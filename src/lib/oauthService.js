@@ -5,14 +5,14 @@ const OAUTH_CONFIG = {
   facebook: {
     clientId: import.meta.env.VITE_FACEBOOK_CLIENT_ID,
     redirectUri: 'https://social.dreammap.hu/oauth/callback/facebook',
-    scope: 'email,public_profile,pages_manage_posts,pages_read_engagement,pages_show_list,instagram_basic,instagram_content_publish',
+    scope: 'email,public_profile,pages_read_engagement',
     authUrl: 'https://www.facebook.com/v18.0/dialog/oauth'
   },
   instagram: {
     // Instagram uses Facebook OAuth
     clientId: import.meta.env.VITE_FACEBOOK_CLIENT_ID,
     redirectUri: 'https://social.dreammap.hu/oauth/callback/instagram',
-    scope: 'instagram_basic,instagram_content_publish,pages_show_list',
+    scope: 'email,public_profile',
     authUrl: 'https://www.facebook.com/v18.0/dialog/oauth'
   },
   twitter: {
