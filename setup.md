@@ -2,51 +2,67 @@
 
 ## Frontend Environment Variables
 
-Create a `.env` file in the root directory with the following variables:
+The application is configured to use the same production backend for both local development and live deployment. This ensures consistency and eliminates environment-specific issues.
 
-### For Local Development
+### For All Environments (Recommended)
 ```bash
-VITE_API_URL=http://localhost:8787
+# No .env file needed - uses production backend automatically
+# The app will use: https://social-sync-api.norbert-gobor3.workers.dev
 ```
 
-### For Production
+### For Custom API URL (Optional)
 ```bash
-VITE_API_URL=https://your-worker.your-subdomain.workers.dev
+# Only if you want to override the default
+VITE_API_URL=https://your-custom-api-url.com
 ```
 
 ## Backend Configuration
 
-Update `wrangler.toml` with your actual database ID and environment variables:
-
-```toml
-[vars]
-CORS_ORIGIN = "https://your-frontend-domain.com"
-JWT_SECRET = "your-secure-jwt-secret-here"
-```
+The production backend is already deployed and configured at:
+- **URL**: `https://social-sync-api.norbert-gobor3.workers.dev`
+- **Database**: D1 database with all tables created
+- **CORS**: Configured for multiple origins including localhost
 
 ## Setup Steps
 
-### 1. Backend Setup (Required)
-1. Set up Cloudflare Workers backend (see README.md)
-2. Create D1 database and run migrations
-3. Update `wrangler.toml` with your database ID
-4. Run backend locally: `cd api && npm run dev`
-
-### 2. Frontend Setup
-1. Create `.env` file with `VITE_API_URL=http://localhost:8787`
+### 1. Frontend Setup (No Backend Required)
+1. Clone the repository: `git clone https://github.com/dreammapmusic/social-sync.git`
 2. Install dependencies: `npm install`
-3. Run frontend: `npm run dev`
-4. App will connect to your backend API
+3. Start frontend: `npm run dev`
+4. App will automatically connect to the production backend
+
+### 2. Local Development
+```bash
+npm install
+npm run dev
+# Frontend runs on http://localhost:5173
+# Backend: https://social-sync-api.norbert-gobor3.workers.dev
+```
 
 ### 3. Production Deployment
-1. Deploy backend to Cloudflare Workers: `cd api && npm run deploy`
-2. Deploy frontend to Netlify/Vercel
-3. Update frontend `.env` with production backend URL
+1. Deploy frontend to Netlify/Vercel/GitHub Pages
+2. No backend deployment needed - already live
+3. Frontend will automatically use the production backend
 
 ## Demo Account
 
-The app includes a demo account for testing:
+The production backend includes a demo account for testing:
 - Email: `demo@socialsync.com`
 - Password: `demo123`
 
-This account is created automatically when the backend starts. 
+This account is available in both local development and live deployment.
+
+## Benefits of This Approach
+
+✅ **Consistency**: Same backend for all environments  
+✅ **Simplicity**: No local backend setup required  
+✅ **Reliability**: Production-tested backend  
+✅ **Real Data**: All users share the same database  
+✅ **Easy Testing**: Local changes test against real backend  
+
+## Troubleshooting
+
+If you encounter CORS issues:
+1. The backend supports multiple origins including localhost
+2. Check browser console for specific error messages
+3. Ensure you're using the latest deployed backend version 

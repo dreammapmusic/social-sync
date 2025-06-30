@@ -1,5 +1,7 @@
+import { getApiUrl } from '../config.js';
+
 // API configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+const API_BASE_URL = getApiUrl();
 
 class ApiError extends Error {
   constructor(message, status, data) {
