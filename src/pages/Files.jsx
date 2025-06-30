@@ -42,43 +42,8 @@ const Files = () => {
 
   const loadFiles = () => {
     const savedFiles = localStorage.getItem('socialScheduler_files');
-    const filesData = savedFiles ? JSON.parse(savedFiles) : [
-      // Recent uploads
-      { id: 1, name: 'promo_video_final.mp4', type: 'video/mp4', size: 25600000, uploadedAt: '2025-01-15T10:30:00Z' },
-      { id: 2, name: 'summer_sale_banner.png', type: 'image/png', size: 1200000, uploadedAt: '2025-01-15T15:45:00Z' },
-      { id: 3, name: 'background_music.mp3', type: 'audio/mpeg', size: 3500000, uploadedAt: '2025-01-14T11:00:00Z' },
-      
-      // Product images
-      { id: 4, name: 'product_showcase_2025.jpg', type: 'image/jpeg', size: 2800000, uploadedAt: '2025-01-14T09:15:00Z' },
-      { id: 5, name: 'behind_the_scenes.mov', type: 'video/quicktime', size: 45200000, uploadedAt: '2025-01-13T16:20:00Z' },
-      { id: 6, name: 'team_photo_hires.png', type: 'image/png', size: 8900000, uploadedAt: '2025-01-13T14:30:00Z' },
-      
-      // Social media templates
-      { id: 7, name: 'instagram_story_template.psd', type: 'application/octet-stream', size: 15600000, uploadedAt: '2025-01-12T10:45:00Z' },
-      { id: 8, name: 'quote_graphics_bundle.zip', type: 'application/zip', size: 23400000, uploadedAt: '2025-01-12T08:30:00Z' },
-      { id: 9, name: 'logo_variations.svg', type: 'image/svg+xml', size: 125000, uploadedAt: '2025-01-11T17:00:00Z' },
-      
-      // Video content
-      { id: 10, name: 'customer_testimonial_v2.mp4', type: 'video/mp4', size: 67800000, uploadedAt: '2025-01-11T12:15:00Z' },
-      { id: 11, name: 'tutorial_screen_recording.mp4', type: 'video/mp4', size: 89200000, uploadedAt: '2025-01-10T14:45:00Z' },
-      
-      // Audio assets
-      { id: 12, name: 'upbeat_intro_music.wav', type: 'audio/wav', size: 12400000, uploadedAt: '2025-01-10T09:30:00Z' },
-      { id: 13, name: 'podcast_intro.mp3', type: 'audio/mpeg', size: 2100000, uploadedAt: '2025-01-09T16:00:00Z' },
-      
-      // Documents and resources
-      { id: 14, name: 'content_calendar_Q1.pdf', type: 'application/pdf', size: 890000, uploadedAt: '2025-01-09T11:20:00Z' },
-      { id: 15, name: 'brand_guidelines.docx', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', size: 1560000, uploadedAt: '2025-01-08T13:45:00Z' },
-      
-      // Additional graphics
-      { id: 16, name: 'infographic_stats_2024.png', type: 'image/png', size: 3400000, uploadedAt: '2025-01-08T10:00:00Z' },
-      { id: 17, name: 'event_promo_square.jpg', type: 'image/jpeg', size: 1800000, uploadedAt: '2025-01-07T15:30:00Z' },
-      { id: 18, name: 'animated_logo.gif', type: 'image/gif', size: 2600000, uploadedAt: '2025-01-07T09:45:00Z' }
-    ];
+    const filesData = savedFiles ? JSON.parse(savedFiles) : [];
     setFiles(filesData);
-    if (!savedFiles) {
-      localStorage.setItem('socialScheduler_files', JSON.stringify(filesData));
-    }
   };
   
   const handleUploadClick = () => {

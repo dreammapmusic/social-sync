@@ -69,7 +69,7 @@ const Analytics = () => {
       linkedin: Linkedin,
       youtube: Youtube
     };
-    return icons[platform];
+    return icons[platform] || Users;
   };
 
   const getPlatformColor = (platform) => {
@@ -151,6 +151,13 @@ const Analytics = () => {
       </div>
     );
   }
+
+  const platformBreakdown = analytics.platformBreakdown || {};
+  const topPosts = analytics.topPosts || [];
+  const demographics = analytics.demographics || { ageGroups: [], locations: [], genderBreakdown: [], deviceTypes: [] };
+  const deviceTypes = demographics.deviceTypes || [];
+  const competitorAnalysis = analytics.competitorAnalysis || [];
+  const insightsData = analytics.insights || [];
 
   return (
     <>
@@ -273,7 +280,7 @@ const Analytics = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-400">Follower Growth</p>
-                    <p className="text-2xl font-bold text-white">+{analytics.overview.followerGrowth.toLocaleString()}</p>
+                    <p className="text-2xl font-bold text-white">+{(analytics.overview?.followerGrowth ?? 0).toLocaleString()}</p>
                                           <p className="text-xs text-green-400 mt-1 flex items-center">
                         <TrendingUp className="h-3 w-3 mr-1" />
                         +15.7% vs last period
@@ -317,7 +324,7 @@ const Analytics = () => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Likes</p>
-                      <p className="text-xl font-bold text-white">{analytics.overview.totalLikes.toLocaleString()}</p>
+                      <p className="text-xl font-bold text-white">{(analytics.overview?.totalLikes ?? 0).toLocaleString()}</p>
                       <p className="text-xs text-green-400">+18.2%</p>
                   </div>
                 </div>
@@ -328,7 +335,7 @@ const Analytics = () => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Comments</p>
-                      <p className="text-xl font-bold text-white">{analytics.overview.totalComments.toLocaleString()}</p>
+                      <p className="text-xl font-bold text-white">{(analytics.overview?.totalComments ?? 0).toLocaleString()}</p>
                       <p className="text-xs text-green-400">+22.7%</p>
                   </div>
                 </div>
@@ -339,7 +346,7 @@ const Analytics = () => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Shares</p>
-                      <p className="text-xl font-bold text-white">{analytics.overview.totalShares.toLocaleString()}</p>
+                      <p className="text-xl font-bold text-white">{(analytics.overview?.totalShares ?? 0).toLocaleString()}</p>
                       <p className="text-xs text-green-400">+14.3%</p>
                   </div>
                 </div>
@@ -397,9 +404,9 @@ const Analytics = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {Object.entries(analytics.platformBreakdown).map(([platform, data]) => {
+                  {Object.entries(platformBreakdown).map(([platform, data]) => {
                     const Icon = getPlatformIcon(platform);
-                    const isPositiveGrowth = data.growth.startsWith('+');
+                    const isPositiveGrowth = typeof data.growth === 'string' && data.growth.startsWith('+');
                     
                     return (
                       <motion.div
@@ -426,15 +433,15 @@ const Analytics = () => {
                         <div className="space-y-3">
                           <div className="flex justify-between">
                             <span className="text-sm text-gray-400">Reach</span>
-                            <span className="text-sm font-medium text-white">{data.reach.toLocaleString()}</span>
+                            <span className="text-sm font-medium text-white">{(data.reach ?? 0).toLocaleString()}</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-sm text-gray-400">Engagement</span>
-                            <span className="text-sm font-medium text-white">{data.engagement.toLocaleString()}</span>
+                            <span className="text-sm font-medium text-white">{(data.engagement ?? 0).toLocaleString()}</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-sm text-gray-400">Followers</span>
-                            <span className="text-sm font-medium text-white">{data.followers.toLocaleString()}</span>
+                            <span className="text-sm font-medium text-white">{(data.followers ?? 0).toLocaleString()}</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-sm text-gray-400">Posts</span>
@@ -459,7 +466,7 @@ const Analytics = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {analytics.topPosts.map((post, index) => (
+                  {topPosts.map((post, index) => (
                       <motion.div
                         key={post.id}
                         initial={{ opacity: 0, x: -20 }}
@@ -471,14 +478,14 @@ const Analytics = () => {
                           <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
                             <div className="flex gap-2">
-                              {post.platform.map((platform) => {
+                              {Array.isArray(post.platform) ? post.platform.map((platform) => {
                                 const Icon = getPlatformIcon(platform);
                                 return (
                                   <div key={platform} className={`h-6 w-6 rounded ${getPlatformColor(platform)} flex items-center justify-center`}>
                                     <Icon className="h-3 w-3 text-white" />
                                 </div>
                                 );
-                              })}
+                              }) : null}
                             </div>
                             <Badge variant="secondary" className="bg-green-500/20 text-green-400">
                               {post.engagementRate}% engagement
@@ -526,7 +533,7 @@ const Analytics = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {analytics.demographics.ageGroups.map((group, index) => (
+                    {demographics.ageGroups.map((group, index) => (
                       <div key={group.label} className="flex items-center gap-4">
                         <div className="w-16 text-sm text-gray-400">{group.label}</div>
                         <div className="flex-1 bg-gray-700 rounded-full h-3">
@@ -551,7 +558,7 @@ const Analytics = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {analytics.demographics.locations.map((location, index) => (
+                    {demographics.locations.map((location, index) => (
                       <div key={location.country} className="flex items-center justify-between">
                         <span className="text-white text-sm">{location.country}</span>
                         <div className="flex items-center gap-2">
@@ -578,7 +585,7 @@ const Analytics = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {analytics.demographics.genderBreakdown.map((group, index) => (
+                    {demographics.genderBreakdown.map((group, index) => (
                       <div key={group.label} className="flex items-center gap-4">
                         <div className="w-16 text-sm text-gray-400">{group.label}</div>
                         <div className="flex-1 bg-gray-700 rounded-full h-3">
@@ -603,7 +610,7 @@ const Analytics = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {analytics.demographics.deviceTypes.map((device, index) => (
+                    {deviceTypes.map((device, index) => (
                       <div key={device.label} className="flex items-center gap-4">
                         <div className="w-16 text-sm text-gray-400">{device.label}</div>
                         <div className="flex-1 bg-gray-700 rounded-full h-3">
@@ -633,7 +640,7 @@ const Analytics = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {analytics.competitorAnalysis.map((competitor, index) => (
+                  {competitorAnalysis.map((competitor, index) => (
                     <motion.div
                       key={competitor.name}
                       initial={{ opacity: 0, y: 20 }}
@@ -686,7 +693,7 @@ const Analytics = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {analytics.insights.map((insight, index) => {
+                  {insightsData.map((insight, index) => {
                     const Icon = insight.icon;
                     const colorClasses = {
                       positive: 'border-green-500/20 bg-green-500/10',

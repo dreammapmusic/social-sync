@@ -393,7 +393,7 @@ const Calendar = () => {
         <CreatePostModal
           isOpen={showCreateModal}
           onClose={() => setShowCreateModal(false)}
-          onSubmit={handleCreatePost}
+          onSave={handleCreatePost}
         />
       </div>
     </>

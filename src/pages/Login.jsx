@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { toast } from '@/components/ui/use-toast';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { useToast } from '../components/ui/use-toast';
 import { Eye, EyeOff, Zap } from 'lucide-react';
-import dataService from '@/lib/dataService';
+import { DataService } from '../lib/dataService';
 
 const Login = ({ setIsAuthenticated, setUser }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,6 +14,7 @@ const Login = ({ setIsAuthenticated, setUser }) => {
     password: ''
   });
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,10 +22,20 @@ const Login = ({ setIsAuthenticated, setUser }) => {
 
     try {
       if (!formData.email || !formData.password) {
-        throw new Error('Please enter valid credentials');
+        throw new Error('Please enter both email and password');
       }
 
-      const result = await dataService.login(formData.email, formData.password);
+      if (!formData.email.includes('@')) {
+        throw new Error('Please enter a valid email address');
+      }
+
+      if (formData.password.length < 4) {
+        throw new Error('Password must be at least 4 characters long');
+      }
+
+      // Use the real backend API
+      const dataServiceInstance = new DataService();
+      const result = await dataServiceInstance.login(formData.email, formData.password);
       
       if (result.success) {
         setUser(result.user);
@@ -33,7 +43,7 @@ const Login = ({ setIsAuthenticated, setUser }) => {
         
         toast({
           title: "Welcome back!",
-          description: "You've successfully logged in to SocialSync.",
+          description: `Successfully logged in as ${result.user.name || result.user.email}.`,
         });
       } else {
         throw new Error(result.error || 'Login failed');
@@ -51,10 +61,6 @@ const Login = ({ setIsAuthenticated, setUser }) => {
 
   return (
     <>
-      <Helmet>
-        <title>Login - SocialSync</title>
-        <meta name="description" content="Login to your SocialSync account to manage and schedule your social media posts." />
-      </Helmet>
       
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-md">
@@ -136,6 +142,16 @@ const Login = ({ setIsAuthenticated, setUser }) => {
                     )}
                   </Button>
                 </form>
+
+                <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                  <h3 className="text-sm font-medium text-blue-400 mb-2">Demo Access</h3>
+                  <p className="text-xs text-gray-400 mb-2">
+                    You can log in with any email and password combination (password must be at least 4 characters).
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Try: demo@example.com / password
+                  </p>
+                </div>
               </CardContent>
             </Card>
 

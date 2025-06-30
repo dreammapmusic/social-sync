@@ -16,8 +16,8 @@ import {
   RefreshCw,
   Layout as LayoutIcon
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
+import { Button } from './ui/button';
+import { useToast } from './ui/use-toast';
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -25,10 +25,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useDashboard } from '@/contexts/DashboardContext';
-import { useTheme } from '@/contexts/ThemeContext';
+} from './ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { useDashboard } from '../contexts/DashboardContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -38,12 +38,13 @@ const navigation = [
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
-const Layout = ({ children, user, setUser:_setUser }) => {
+const Layout = ({ children, user, onLogout }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { customizationMode, toggleCustomizationMode, resetDashboard, dashboardLayout, setDashboardLayout } = useDashboard();
   const { isDark } = useTheme();
+  const { toast } = useToast();
 
   useEffect(() => {
     const handleResize = () => {
@@ -55,14 +56,21 @@ const Layout = ({ children, user, setUser:_setUser }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.clear();
-    _setUser(null);
-    toast({
-      title: "Logged out successfully",
-      description: "See you next time!",
-    });
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await onLogout();
+      toast({
+        title: "Logged out successfully",
+        description: "See you next time!",
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast({
+        title: "Logout error",
+        description: "There was an issue logging out, but you've been signed out locally.",
+        variant: "destructive"
+      });
+    }
   };
 
   const getUserInitials = (name) => {

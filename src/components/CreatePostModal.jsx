@@ -85,7 +85,7 @@ const CreatePostModal = ({ isOpen, onClose, onSave, postToEdit }) => {
   };
   
   const handleSaveDraft = () => {
-     if (!formData.content.trim()) {
+    if (!formData.content.trim()) {
       toast({ title: "Content required", description: "Please enter some content for your draft.", variant: "destructive" });
       return;
     }

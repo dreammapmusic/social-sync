@@ -183,7 +183,7 @@ const Dashboard = () => {
           <div className="text-xs text-gray-400">Published</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-white">{stats.totalReach.toLocaleString()}</div>
+          <div className="text-2xl font-bold text-white">{(stats.totalReach || 0).toLocaleString()}</div>
           <div className="text-xs text-gray-400">Total Reach</div>
         </div>
       </div>
@@ -364,34 +364,40 @@ const Dashboard = () => {
   };
 
   const PlatformStatusWidget = ({ widget }) => {
-    const platforms = [
-      { name: 'Facebook', icon: Facebook, status: 'connected', color: 'bg-blue-600' },
-      { name: 'Instagram', icon: Instagram, status: 'connected', color: 'bg-purple-600' },
-      { name: 'Twitter', icon: Twitter, status: 'connected', color: 'bg-sky-500' },
-      { name: 'LinkedIn', icon: Linkedin, status: 'disconnected', color: 'bg-blue-700' },
-      { name: 'YouTube', icon: Youtube, status: 'connected', color: 'bg-red-600' },
-    ];
-    
+    const [accounts, setAccounts] = useState([]);
+
+    useEffect(() => {
+      const stored = localStorage.getItem('socialScheduler_accounts');
+      if (stored) {
+        setAccounts(JSON.parse(stored));
+      }
+    }, []);
+
+    if (accounts.length === 0) {
+      return (
+        <DraggableWidget widget={widget}>
+          <div className="text-center py-4 text-gray-400 text-sm">No connected accounts</div>
+        </DraggableWidget>
+      );
+    }
     return (
       <DraggableWidget widget={widget}>
         <div className="space-y-2">
-          {platforms.map((platform) => {
-            const Icon = platform.icon;
+          {accounts.map((account) => {
+            const Icon = getPlatformIcon(account.platform);
             return (
-              <div key={platform.name} className="flex items-center justify-between p-2 rounded bg-white/5">
+              <div key={account.id} className="flex items-center justify-between p-2 rounded bg-white/5">
                 <div className="flex items-center gap-2">
-                  <div className={`h-6 w-6 rounded ${platform.color} flex items-center justify-center`}>
-                    <Icon className="h-3 w-3 text-white" />
+                  <div className={`h-6 w-6 rounded ${getPlatformColor(account.platform)} flex items-center justify-center`}>
+                    {Icon}
                   </div>
-                  <span className="text-sm text-white">{platform.name}</span>
+                  <span className="text-sm text-white capitalize">{account.platform}</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  {platform.status === 'connected' ? (
-                    <CheckCircle className="h-4 w-4 text-green-400" />
-                  ) : (
-                    <AlertCircle className="h-4 w-4 text-yellow-400" />
-                  )}
-                </div>
+                {account.connected ? (
+                  <CheckCircle className="h-4 w-4 text-green-400" />
+                ) : (
+                  <AlertCircle className="h-4 w-4 text-yellow-400" />
+                )}
               </div>
             );
           })}
@@ -513,7 +519,7 @@ const Dashboard = () => {
 
         <CreatePostModal
           isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
+          onClose={() => setShowCreateModal(false)}
           onSave={handleSavePost}
           postToEdit={editingPost}
         />

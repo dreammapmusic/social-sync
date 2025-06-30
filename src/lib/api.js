@@ -14,7 +14,12 @@ class ApiError extends Error {
 
 class ApiService {
   constructor() {
-    this.token = localStorage.getItem('authToken');
+    this.token = null;
+  }
+
+  getToken() {
+    // Always get fresh token from localStorage
+    return localStorage.getItem('authToken');
   }
 
   setToken(token) {
@@ -23,6 +28,7 @@ class ApiService {
       localStorage.setItem('authToken', token);
     } else {
       localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
     }
   }
 
@@ -31,8 +37,9 @@ class ApiService {
       'Content-Type': 'application/json',
     };
 
-    if (this.token) {
-      headers.Authorization = `Bearer ${this.token}`;
+    const token = this.getToken();
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
     }
 
     return headers;
@@ -103,10 +110,27 @@ class ApiService {
   }
 
   async getCurrentUser() {
-    return this.request('/api/auth/me');
+    try {
+      return await this.request('/api/auth/me');
+    } catch (error) {
+      if (error.status === 401) {
+        throw new ApiError('Not authenticated. Please log in again.', 401, { error: 'Not authenticated' });
+      }
+      throw error;
+    }
   }
 
-  logout() {
+  async logout() {
+    const token = this.getToken();
+    if (token) {
+      try {
+        await this.request('/api/auth/logout', {
+          method: 'POST'
+        });
+      } catch (error) {
+        console.warn('Logout API call failed:', error);
+      }
+    }
     this.setToken(null);
   }
 
@@ -271,4 +295,5 @@ class ApiService {
 
 // Create and export a singleton instance
 const apiService = new ApiService();
-export default apiService; 
+export default apiService;
+export { ApiError }; 

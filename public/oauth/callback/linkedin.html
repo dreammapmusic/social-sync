@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn OAuth Callback</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #0077b5, #005885);
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid white;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Connecting LinkedIn Account...</h2>
+        <div class="spinner"></div>
+        <p>Please wait while we complete the connection.</p>
+    </div>
+
+    <script>
+        (function() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const code = urlParams.get('code');
+                const state = urlParams.get('state');
+                const error = urlParams.get('error');
+                const errorDescription = urlParams.get('error_description');
+
+                if (window.opener) {
+                    if (error) {
+                        window.opener.postMessage({
+                            type: 'OAUTH_CALLBACK',
+                            data: {
+                                state: state,
+                                error: errorDescription || error || 'Authorization failed'
+                            }
+                        }, window.location.origin);
+                    } else if (code && state) {
+                        window.opener.postMessage({
+                            type: 'OAUTH_CALLBACK',
+                            data: {
+                                state: state,
+                                code: code
+                            }
+                        }, window.location.origin);
+                    } else {
+                        window.opener.postMessage({
+                            type: 'OAUTH_CALLBACK',
+                            data: {
+                                state: state,
+                                error: 'No authorization code received'
+                            }
+                        }, window.location.origin);
+                    }
+                } else {
+                    console.error('No opener window found');
+                }
+                
+                setTimeout(() => {
+                    window.close();
+                }, 1000);
+                
+            } catch (err) {
+                console.error('OAuth callback error:', err);
+                if (window.opener) {
+                    window.opener.postMessage({
+                        type: 'OAUTH_CALLBACK',
+                        data: {
+                            error: 'Callback processing failed: ' + err.message
+                        }
+                    }, window.location.origin);
+                }
+                window.close();
+            }
+        })();
+    </script>
+</body>
+</html> 
